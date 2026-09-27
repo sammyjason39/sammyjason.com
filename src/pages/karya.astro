@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const products = [
+  {
+    name: 'Conextlab.ai',
+    monogram: 'CL',
+    role: 'Chief Technology Officer & Co-Founder',
+    desc: 'Solusi otomasi enterprise dan sistem multi-agent untuk alur kerja B2B. Melayani klien korporat nasional.',
+    clients: 'Intel, Nvidia, Indosat Ooredoo Hutchison, Pupuk Kaltim, BPJS Ketenagakerjaan, DJP',
+    status: 'Aktif di produksi',
+    href: 'https://conextlab.ai',
+  },
+  {
+    name: 'ConextRouter',
+    monogram: 'CR',
+    role: 'Lead Architect',
+    desc: 'Gateway cerdas perutean LLM untuk manajemen quota, semantic caching, rate limiting, dan cost reduction pada ConextOS.',
+    status: 'Aktif di produksi',
+    href: 'https://app.conextrouter.xyz',
+  },
+  {
+    name: 'BelajarAI.id',
+    monogram: 'BA',
+    role: 'Founder & Lead Instructor',
+    desc: 'Hub edukasi praktis AI di Indonesia. Mengajarkan hands-on building, RAG architecture, agent tools, dan otomasi n8n untuk 800+ member.',
+    status: 'Aktif',
+    href: 'https://belajarai.id',
+  },
+  {
+    name: 'Pekerja.AI',
+    monogram: 'PA',
+    role: 'Technical Advisor & Co-Founder',
+    desc: 'Platform kurasi talenta AI dengan pembuktian portofolio karya nyata (portfolio proof, not promises).',
+    status: 'Aktif',
+    href: 'https://pekerja.ai',
+  },
+  {
+    name: 'Artifisial.com',
+    monogram: 'AI',
+    role: 'Co-Founder',
+    desc: 'Media berita, ulasan teknologi, dan kurasi perkembangan artificial intelligence di Indonesia.',
+    status: 'Aktif',
+    href: 'https://artifisial.com',
+  },
+  {
+    name: 'n8n Community Advocacy',
+    monogram: 'N8',
+    role: 'N8N Ambassador (sejak Juli 2026)',
+    desc: 'Edukasi otomasi alur kerja, integrasi webhook, kustom node AI, dan pembinaan komunitas open-source.',
+    status: 'Aktif',
+    href: 'https://n8n.io',
+  },
+];
+
+const caseStudies = [
+  {
+    title: 'Reduksi Token Cost & Latensi API Agentik hingga 42%',
+    problem:
+      'Sistem layanan pelanggan korporat menerima ribuan percakapan harian dengan biaya token yang terus membesar dan latensi respons yang memburuk saat beban puncak.',
+    approach:
+      'Perancangan ulang pipeline agent: semantic caching di ConextRouter, disiplin context hygiene, bounded tools dengan skema ketat, dan circuit breaker pada orkestrasi.',
+    result:
+      'Reduksi biaya token dan latensi API agentik hingga 42% tanpa menurunkan kualitas jawaban layanan pelanggan.',
+  },
+  {
+    title: 'Isolasi Deployment Model Open-Weight dengan Sandboxing VPS Resource-Constrained',
+    problem:
+      'Model open-weight perlu dijalankan di VPS berkapasitas terbatas tanpa mengganggu layanan lain dan tanpa mengekspos endpoint ke publik.',
+    approach:
+      'Sandboxing dengan container terisolasi, hard memory limit, internal network tanpa akses publik, dan reverse proxy tunggal dengan autentikasi header.',
+    result:
+      'Deployment model yang stabil, konsumsi memori terprediksi, dan permukaan serangan minimal di lingkungan resource-constrained.',
+  },
+];
+---
+
+<BaseLayout
+  title="Karya, Produk & Ekosistem"
+  description="Ekosistem produk Samuel Jason: Conextlab, ConextRouter, BelajarAI.id, Pekerja.AI, Artifisial.com, dan advocacy n8n. Sistem yang dibangun, diuji, dan dirawat di produksi nyata."
+  path="/karya/"
+>
+  <section class="container-site pt-16 pb-4 sm:pt-20">
+    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Karya, Produk &amp; Ekosistem</h1>
+    <p class="mt-5 max-w-2xl text-lg text-ink-300">
+      Ini bukan portofolio pajangan. Ini sistem yang saya bangun, uji, dan rawat di lingkungan
+      produksi nyata.
+    </p>
+  </section>
+
+  <section class="container-site pt-10">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Ekosistem Produk Aktif</h2>
+    <div class="mt-8 grid gap-5 lg:grid-cols-2">
+      {
+        products.map((p) => (
+          <article class="card card-hover p-6 flex gap-5">
+            <span
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500/30 to-blue-600/30 text-sm font-bold text-white ring-1 ring-white/15"
+              aria-hidden="true"
+            >
+              {p.monogram}
+            </span>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <h3 class="text-lg font-semibold text-white">
+                  <a href={p.href} target="_blank" rel="noopener noreferrer" class="hover:text-brand-300">
+                    {p.name} <span class="text-ink-400" aria-hidden="true">↗</span>
+                  </a>
+                </h3>
+                <span class="pill pill-neutral">{p.status}</span>
+              </div>
+              <p class="mt-1 text-sm font-medium text-brand-300">{p.role}</p>
+              <p class="mt-2.5 text-sm leading-relaxed text-ink-300">{p.desc}</p>
+              {p.clients && (
+                <p class="mt-2.5 text-xs leading-relaxed text-ink-400">
+                  <span class="font-semibold text-ink-300">Klien &amp; partner:</span> {p.clients}
+                </p>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-site py-20">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Catatan Studi Kasus Lapangan</h2>
+    <div class="mt-8 grid gap-5 lg:grid-cols-2">
+      {
+        caseStudies.map((cs, i) => (
+          <article class="card p-7">
+            <p class="pill mb-4">Studi Kasus {i + 1}</p>
+            <h3 class="text-xl font-semibold leading-snug text-white">{cs.title}</h3>
+            <dl class="mt-5 space-y-4 text-sm leading-relaxed">
+              <div>
+                <dt class="font-semibold text-brand-300">Masalah</dt>
+                <dd class="mt-1 text-ink-300">{cs.problem}</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-brand-300">Pendekatan</dt>
+                <dd class="mt-1 text-ink-300">{cs.approach}</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-brand-300">Hasil</dt>
+                <dd class="mt-1 text-ink-300">{cs.result}</dd>
+              </div>
+            </dl>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

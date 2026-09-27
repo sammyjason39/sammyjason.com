@@ -1,0 +1,238 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Avatar from '../../components/Avatar.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import {
+  CATEGORIES,
+  SITE_URL,
+  SITE_NAME,
+  formatDateID,
+  readingTime,
+} from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const { title, description, pubDate, updatedDate, category, tags, canonicalUrl, heroImage, leadAsset } =
+  post.data;
+const cat = CATEGORIES[category];
+const minutes = readingTime(post.body ?? '');
+const canonical = canonicalUrl ?? new URL(`/blog/${post.id}/`, SITE_URL).href;
+
+// 2 artikel terkait dalam kategori yang sama.
+const related = (await getCollection('blog', ({ data }) => !data.draft && data.category === category))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => Math.abs(a.data.pubDate.valueOf() - pubDate.valueOf()) - Math.abs(b.data.pubDate.valueOf() - pubDate.valueOf()))
+  .slice(0, 2)
+  .map((p) => ({
+    title: p.data.title,
+    href: `/blog/${p.id}/`,
+    category: p.data.category,
+    pubDate: p.data.pubDate,
+    minutes: readingTime(p.body ?? ''),
+    description: p.data.description,
+  }));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: 'Samuel Jason',
+    alternateName: 'Samz',
+    jobTitle: 'Chief Technology Officer',
+    url: SITE_URL,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: SITE_NAME,
+    url: SITE_URL,
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonical,
+  },
+  image: new URL(heroImage ?? '/og.png', SITE_URL).href,
+  articleSection: cat?.label ?? category,
+  keywords: tags.join(', '),
+  inLanguage: 'id-ID',
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  path={`/blog/${post.id}/`}
+  ogType="article"
+  ogImage={heroImage ?? '/og.png'}
+  publishedTime={pubDate.toISOString()}
+  modifiedTime={(updatedDate ?? pubDate).toISOString()}
+  tags={tags}
+  includePersonJsonLd={false}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <article class="container-site pt-12 pb-16 sm:pt-16">
+    <nav class="flex flex-wrap items-center gap-2 text-xs text-ink-400" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-brand-300">Beranda</a>
+      <span aria-hidden="true">›</span>
+      <a href="/blog/" class="hover:text-brand-300">Blog</a>
+      <span aria-hidden="true">›</span>
+      <a href={`/blog/kategori/${category}/`} class="hover:text-brand-300">{cat?.label ?? category}</a>
+      <span aria-hidden="true">›</span>
+      <span class="text-ink-300" aria-current="page">{title.length > 42 ? `${title.slice(0, 42)}…` : title}</span>
+    </nav>
+
+    <header class="mt-8 max-w-3xl">
+      <a href={`/blog/kategori/${category}/`} class="pill">{cat?.label ?? category}</a>
+      <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-400">
+        <time datetime={pubDate.toISOString()}>{formatDateID(pubDate)}</time>
+        {
+          updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>
+                Diperbarui <time datetime={updatedDate.toISOString()}>{formatDateID(updatedDate)}</time>
+              </span>
+            </>
+          )
+        }
+        <span aria-hidden="true">·</span>
+        <span>{minutes} menit baca</span>
+      </div>
+      <h1 class="mt-4 text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-[2.75rem]">
+        {title}
+      </h1>
+      <p class="mt-4 text-lg leading-relaxed text-ink-300">{description}</p>
+    </header>
+
+    {
+      heroImage && (
+        <img
+          src={heroImage}
+          alt={`Ilustrasi artikel: ${title}`}
+          width="1200"
+          height="675"
+          class="mt-10 w-full rounded-2xl border border-white/8"
+          loading="eager"
+          decoding="async"
+        />
+      )
+    }
+
+    <div class="prose-custom prose prose-invert prose-slate mt-12 max-w-none lg:prose-lg">
+      <Content />
+    </div>
+
+    {
+      leadAsset && (
+        <aside class="card mt-12 p-6 border-brand-500/25 bg-gradient-to-br from-brand-500/8 to-transparent">
+          <p class="pill mb-3">Lead Magnet</p>
+          <h2 class="text-lg font-semibold text-white">{leadAsset.title}</h2>
+          <p class="mt-2 text-sm text-ink-300">
+            Kirim pesan lewat halaman kontak dengan kata kunci <strong class="text-brand-300">{leadAsset.keyword}</strong> untuk mendapatkan aset ini.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a href="/kontak/" class="btn btn-primary btn-sm">Minta via kontak</a>
+            <a href={leadAsset.downloadUrl} class="btn btn-secondary btn-sm">Unduh aset</a>
+          </div>
+        </aside>
+      )
+    }
+
+    <aside class="card mt-10 flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
+      <Avatar size={56} class="shrink-0" />
+      <div>
+        <p class="text-sm font-semibold text-white">Ditulis oleh Samuel Jason</p>
+        <p class="mt-1 text-sm leading-relaxed text-ink-400">
+          CTO Conextlab dan Founder Belajar AI. Menemani kamu bertumbuh di Era AI tanpa hype.
+        </p>
+      </div>
+    </aside>
+
+    {
+      related.length > 0 && (
+        <section class="mt-14">
+          <h2 class="text-xl font-bold text-white">Topik Terkait</h2>
+          <div class="mt-6 grid gap-5 sm:grid-cols-2">
+            {related.map((rel) => (
+              <ArticleCard
+                title={rel.title}
+                href={rel.href}
+                category={rel.category}
+                pubDate={rel.pubDate}
+                minutes={rel.minutes}
+                description={rel.description}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="card mt-14 p-6">
+      <h2 class="text-lg font-semibold text-white">Diskusi &amp; tanggapan</h2>
+      <p class="mt-2 text-sm leading-relaxed text-ink-300">
+        v1 sengaja tidak memasang widget komentar berat agar halaman tetap cepat. Kalau mau
+        melanjutkan diskusi, repost tulisan ini di LinkedIn atau kirim email langsung. Saya baca
+        semuanya.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a href="/kontak/" class="btn btn-secondary btn-sm">Kirim pesan</a>
+        <a
+          href="https://linkedin.com/in/samueljasonsantosa"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-secondary btn-sm"
+        >
+          LinkedIn <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+  </article>
+
+  <script>
+    document.querySelectorAll('.prose-custom pre').forEach((pre) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'relative group my-4';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const button = document.createElement('button');
+      button.className =
+        'absolute top-3 right-3 text-xs px-2.5 py-1 rounded bg-white/10 text-zinc-300 hover:text-white hover:bg-white/20 transition opacity-0 group-hover:opacity-100 focus:opacity-100 cursor-pointer';
+      button.textContent = 'Salin';
+      button.setAttribute('aria-label', 'Salin blok kode ke clipboard');
+
+      button.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+        try {
+          await navigator.clipboard.writeText(code);
+          button.textContent = 'Tersalin!';
+          button.classList.add('text-emerald-400');
+          setTimeout(() => {
+            button.textContent = 'Salin';
+            button.classList.remove('text-emerald-400');
+          }, 2000);
+        } catch (e) {
+          button.textContent = 'Gagal';
+        }
+      });
+
+      wrapper.appendChild(button);
+    });
+  </script>
+</BaseLayout>

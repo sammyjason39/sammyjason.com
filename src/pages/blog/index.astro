@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { CATEGORIES, readingTime } from '../../lib/site';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const posts = allPosts.map((p) => ({
+  title: p.data.title,
+  href: `/blog/${p.id}/`,
+  category: p.data.category,
+  pubDate: p.data.pubDate,
+  minutes: readingTime(p.body ?? ''),
+  description: p.data.description,
+}));
+
+const categoryPills = [
+  { href: '/blog/', label: 'Semua Artikel', active: true },
+  ...Object.entries(CATEGORIES).map(([slug, cat]) => ({
+    href: `/blog/kategori/${slug}/`,
+    label: cat.label,
+    active: false,
+  })),
+];
+---
+
+<BaseLayout
+  title="Blog & Catatan Lapangan"
+  description="Catatan lapangan & rekayasa AI dari Samuel Jason: arsitektur, adopsi AI, build log, dan refleksi karir. Tanpa bumbu, tanpa hype."
+  path="/blog/"
+>
+  <section class="container-site pt-16 pb-4 sm:pt-20">
+    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+      Catatan Lapangan &amp; Rekayasa AI
+    </h1>
+    <p class="mt-5 max-w-2xl text-lg text-ink-300">
+      Saya menulis apa yang saya pelajari dari membangun. Kadang soal arsitektur, kadang soal
+      adopsi, kadang soal gagal dan perbaikan. Tanpa bumbu, tanpa hype.
+    </p>
+  </section>
+
+  <section class="container-site pt-8" aria-label="Filter kategori">
+    <nav class="flex flex-wrap gap-2">
+      {
+        categoryPills.map((pill) => (
+          <a
+            href={pill.href}
+            aria-current={pill.active ? 'page' : undefined}
+            class:list={['pill', pill.active ? '' : 'pill-neutral hover:border-brand-500/40']}
+          >
+            {pill.label}
+          </a>
+        ))
+      }
+    </nav>
+  </section>
+
+  <section class="container-site py-14">
+    <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {
+        posts.map((post) => (
+          <ArticleCard
+            title={post.title}
+            href={post.href}
+            category={post.category}
+            pubDate={post.pubDate}
+            minutes={post.minutes}
+            description={post.description}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-site pb-20">
+    <div class="card p-7 max-w-3xl">
+      <h2 class="text-lg font-semibold text-white">Ikuti catatan baru</h2>
+      <p class="mt-2 text-sm text-ink-300">
+        Satu email tiap dua minggu. Isinya catatan praktis, bukan promosi. Berhenti kapan saja.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a href="/rss.xml" class="btn btn-secondary btn-sm">RSS Feed</a>
+        <a
+          href="https://belajarai.id"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary btn-sm"
+        >
+          Gabung komunitas Belajar AI <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

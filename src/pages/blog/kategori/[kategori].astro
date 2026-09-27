@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { CATEGORIES, readingTime } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const categories = new Set(posts.map((p) => p.data.category));
+  return [...categories].map((category) => ({
+    params: { kategori: category },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const cat = CATEGORIES[category];
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.category === category))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((p) => ({
+    title: p.data.title,
+    href: `/blog/${p.id}/`,
+    category: p.data.category,
+    pubDate: p.data.pubDate,
+    minutes: readingTime(p.body ?? ''),
+    description: p.data.description,
+  }));
+
+const categoryPills = [
+  { href: '/blog/', label: 'Semua Artikel', slug: '', active: false },
+  ...Object.entries(CATEGORIES).map(([slug, c]) => ({
+    href: `/blog/kategori/${slug}/`,
+    label: c.label,
+    slug,
+    active: slug === category,
+  })),
+];
+---
+
+<BaseLayout
+  title={`Blog Kategori: ${cat?.label ?? category}`}
+  description={cat?.description ?? `Arsip artikel kategori ${category} di blog Samuel Jason.`}
+  path={`/blog/kategori/${category}/`}
+>
+  <section class="container-site pt-16 pb-4 sm:pt-20">
+    <nav class="text-xs text-ink-400" aria-label="Breadcrumb">
+      <a href="/" class="hover:text-brand-300">Beranda</a>
+      <span aria-hidden="true"> › </span>
+      <a href="/blog/" class="hover:text-brand-300">Blog</a>
+      <span aria-hidden="true"> › </span>
+      <span class="text-ink-300" aria-current="page">{cat?.label ?? category}</span>
+    </nav>
+    <h1 class="mt-6 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+      {cat?.label ?? category}
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-ink-300">{cat?.description}</p>
+  </section>
+
+  <section class="container-site pt-8" aria-label="Filter kategori">
+    <nav class="flex flex-wrap gap-2">
+      {
+        categoryPills.map((pill) => (
+          <a
+            href={pill.href}
+            aria-current={pill.active ? 'page' : undefined}
+            class:list={['pill', pill.active ? '' : 'pill-neutral hover:border-brand-500/40']}
+          >
+            {pill.label}
+          </a>
+        ))
+      }
+    </nav>
+  </section>
+
+  <section class="container-site py-14">
+    {
+      posts.length > 0 ? (
+        <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => (
+            <ArticleCard
+              title={post.title}
+              href={post.href}
+              category={post.category}
+              pubDate={post.pubDate}
+              minutes={post.minutes}
+              description={post.description}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="card p-10 text-center">
+          <p class="text-lg font-semibold text-white">Belum ada artikel di kategori ini.</p>
+          <p class="mt-2 text-sm text-ink-400">
+            Tulisan baru rilis tiap dua minggu. Pantau lewat halaman blog atau RSS.
+          </p>
+          <a href="/blog/" class="btn btn-secondary btn-sm mt-6">Lihat semua artikel</a>
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

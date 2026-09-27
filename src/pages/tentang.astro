@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Avatar from '../components/Avatar.astro';
+
+const values = [
+  {
+    title: 'Faith-first',
+    desc: 'Menjalani karya dan kepemimpinan teknologi sebagai bentuk ibadah dan integritas. Berbagi ilmu tanpa pamrih terselubung.',
+  },
+  {
+    title: 'Learn by Doing',
+    desc: 'Menolak teori kosong. Pemahaman sejati didapat saat tangan menyentuh terminal, konfigurasi Docker, dan mengukur latency di produksi.',
+  },
+  {
+    title: 'Anti-hype & Transparan',
+    desc: 'Jujur tentang batas teknologi AI. Membicarakan biaya token, risiko keamanan data, dan kegagalan secara terbuka.',
+  },
+];
+
+const timeline = [
+  {
+    period: '2024 - Sekarang',
+    role: 'CTO & Co-Founder di Conextlab Technology (Ralali Group)',
+    desc: 'Membangun enterprise agentic AI & automasi.',
+  },
+  {
+    period: '2026 - Sekarang',
+    role: 'N8N Ambassador Indonesia & Global Community Advocate',
+    desc: 'Edukasi otomasi alur kerja dan pembinaan komunitas open-source.',
+  },
+  {
+    period: '2024 - Sekarang',
+    role: 'Founder & Pembina Komunitas Belajar AI',
+    desc: '800+ anggota aktif belajar AI bersama.',
+  },
+  {
+    period: '2024',
+    role: 'AI Product Manager di Ralali.com',
+    desc: 'Memimpin produk AI di marketplace.',
+  },
+  {
+    period: '2023',
+    role: 'IT Project Management di RSUP Prof Ngoerah',
+    desc: 'Rumah Sakit Rujukan Nasional, Bali.',
+  },
+  {
+    period: '2019 - 2024',
+    role: 'Co-Founder & Lead di anakaiti.id',
+    desc: 'Edukasi teknologi & software.',
+  },
+  {
+    period: '2021',
+    role: 'Apple Developer Academy Graduate',
+    desc: 'Cohort Universitas Ciputra Surabaya.',
+  },
+  {
+    period: '2018 - 2022',
+    role: 'Bachelor of Computer Science, BINUS University',
+    desc: 'Fondasi rekayasa perangkat lunak.',
+  },
+];
+
+const certifications = [
+  { name: 'Advanced Deep Learning for LLM & Generative AI', issuer: 'DeepLearning.AI' },
+  { name: 'Scrum Product Owner Certified (SPOC)', issuer: 'ScrumStudy' },
+  { name: 'Belajar Dasar AI & Machine Learning', issuer: 'Dicoding Indonesia' },
+  { name: 'SEO & Digital Marketing Master Certification', issuer: 'Sertifikasi Profesional' },
+];
+---
+
+<BaseLayout
+  title="Tentang Samuel Jason"
+  description="Rekam jejak tujuh tahun Samuel Jason (Samz): CTO Conextlab, founder Belajar AI, praktisi AI yang menulis dari lapangan. Nilai, timeline karir, dan sertifikasi resmi."
+  path="/tentang/"
+>
+  <section class="container-site pt-16 pb-14 sm:pt-20">
+    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Tentang Samuel Jason</h1>
+    <div class="mt-10 grid gap-10 lg:grid-cols-[auto_1fr] lg:gap-14">
+      <div class="mx-auto lg:mx-0">
+        <Avatar size={144} class="ring-1 ring-white/15" />
+      </div>
+      <div class="max-w-3xl space-y-5 text-base leading-relaxed text-ink-300">
+        <p>
+          Saya Samuel Jason, biasa dipanggil Samz. Sehari-hari saya CTO di Conextlab, bagian dari
+          Ralali Group, tempat saya membangun sistem AI untuk perusahaan. Di luar itu saya pembina
+          komunitas Belajar AI, tempat 800 lebih orang belajar AI bersama.
+        </p>
+        <p>
+          Perjalanan saya tidak lurus dan tidak instan. Saya mulai dari kelas Computer Science di
+          BINUS, lanjut ke Apple Developer Academy, merintis anakaiti.id selama hampir lima tahun,
+          jadi AI Product Manager, mengurus proyek TI di rumah sakit rujukan nasional di Bali,
+          sampai akhirnya kembali ke AI. Tujuh tahun, satu benang merah yang sama: bikin teknologi
+          kerja untuk orang biasa.
+        </p>
+        <p>
+          Saya bukan tipe yang jual mimpi. Saya menulis dari apa yang saya bangun dan saya rusak
+          sendiri di lapangan: agent yang looping, biaya token yang meledak, konfigurasi server
+          yang bikin saya bangun jam tiga pagi. Semua saya bagikan, termasuk yang gagal.
+        </p>
+        <p>
+          Prinsip saya sederhana. Menjadi versi terbaik diri sendiri, lalu bantu orang lain
+          melakukan hal yang sama. Iman saya mengajarkan itu: ilmu bukan untuk dipamerkan, tapi
+          untuk dibagikan.
+        </p>
+        <p>
+          Kalau kamu di sini untuk belajar, kita belajar bareng. Kalau kamu bawa masalah bisnis,
+          kita bedah bareng. Saya teman kamu bertumbuh di Era AI.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-site pt-8">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Tiga Nilai Fundamental</h2>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      {
+        values.map((v) => (
+          <div class="card p-6">
+            <h3 class="text-lg font-semibold text-brand-300">{v.title}</h3>
+            <p class="mt-3 text-sm leading-relaxed text-ink-300">{v.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-site pt-20">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Perjalanan Karir</h2>
+    <p class="mt-3 text-sm text-ink-400">2018 sampai sekarang, tanpa manipulasi tanggal.</p>
+    <ol class="mt-10">
+      {
+        timeline.map((item) => (
+          <li class="timeline-item">
+            <p class="text-xs font-semibold uppercase tracking-wider text-brand-300">{item.period}</p>
+            <p class="mt-1 font-semibold text-white">{item.role}</p>
+            <p class="mt-1 text-sm text-ink-400">{item.desc}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="container-site pt-20 pb-20">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Lisensi &amp; Sertifikasi</h2>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      {
+        certifications.map((c) => (
+          <div class="card flex items-center gap-4 p-5">
+            <span
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-500/15 text-brand-300"
+              aria-hidden="true"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6" />
+                <path d="M15.5 13l1.5 8-5-3-5 3 1.5-8" />
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-white">{c.name}</p>
+              <p class="text-sm text-ink-400">{c.issuer}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,311 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Web3Forms access key dibaca saat build dari PUBLIC_WEB3FORMS_KEY.
+// Default FORM-KEY-PENDING artinya owner belum menyetel key; owner tinggal
+// mengganti lewat .env atau environment variable Dokploy lalu rebuild.
+const web3formsKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? 'FORM-KEY-PENDING';
+const keyPending = web3formsKey === 'FORM-KEY-PENDING';
+const emailOwner = 'samueljasonsantosa@gmail.com';
+
+const personaOptions = [
+  {
+    value: 'bisnis',
+    label: 'Pemilik bisnis / Founder',
+    hint: 'Membahas sistem AI, otomasi tim, advisory Conextlab',
+  },
+  {
+    value: 'engineer',
+    label: 'Engineer / Builder',
+    hint: 'Diskusi teknis, n8n, kolaborasi arsitektur',
+  },
+  {
+    value: 'komunitas',
+    label: 'Komunitas / Pembelajar',
+    hint: 'Undangan workshop, materi Belajar AI, sesi ngobrol',
+  },
+  {
+    value: 'lainnya',
+    label: 'Lainnya',
+    hint: 'Selain tiga opsi di atas',
+  },
+];
+---
+
+<BaseLayout
+  title="Mulai Ngobrol"
+  description="Hubungi Samuel Jason: konsultasi sistem AI, diskusi teknis, undangan workshop atau speaking. Saya baca semua pesan dan balas sendiri dalam 1x24 jam kerja."
+  path="/kontak/"
+  includePersonJsonLd={false}
+>
+  <section class="container-site pt-16 pb-4 sm:pt-20">
+    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Mulai Ngobrol</h1>
+    <p class="mt-5 max-w-2xl text-lg text-ink-300">
+      Pilih yang paling dekat dengan kebutuhanmu. Saya baca semua pesan, dan saya balas sendiri.
+    </p>
+  </section>
+
+  <section class="container-site py-12">
+    <div class="grid gap-10 lg:grid-cols-[1fr_22rem]">
+      <!-- Formulir kontak -->
+      <form id="kontak-form" class="card p-7 sm:p-9" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <input type="hidden" name="access_key" value={web3formsKey} />
+        <input type="hidden" name="subject" value="Pesan baru dari sammyjason.com" />
+        <input type="hidden" name="from_name" value="sammyjason.com" />
+
+        <!-- Honeypot anti-spam -->
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <fieldset>
+          <legend class="text-base font-semibold text-white">Kamu datang sebagai apa?</legend>
+          <p class="mt-1 text-sm text-ink-400">Pertanyaan ini yang mengarahkan percakapan kita.</p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            {
+              personaOptions.map((opt, i) => (
+                <label class="segment" for={`persona-${opt.value}`}>
+                  <input
+                    type="radio"
+                    id={`persona-${opt.value}`}
+                    name="persona"
+                    value={opt.label}
+                    class="sr-only peer"
+                    checked={i === 0}
+                    required
+                  />
+                  <span class="block font-medium text-ink-100">{opt.label}</span>
+                  <span class="mt-1 block text-xs text-ink-400">{opt.hint}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="mt-7 grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="nama" class="mb-2 block text-sm font-medium text-ink-100">
+              Nama Lengkap <span class="text-brand-400" aria-hidden="true">*</span>
+            </label>
+            <input type="text" id="nama" name="nama" required autocomplete="name" class="field" placeholder="Nama kamu" />
+          </div>
+          <div>
+            <label for="email" class="mb-2 block text-sm font-medium text-ink-100">
+              Email <span class="text-brand-400" aria-hidden="true">*</span>
+            </label>
+            <input type="email" id="email" name="email" required autocomplete="email" class="field" placeholder="nama@email.com" />
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <label for="organisasi" class="mb-2 block text-sm font-medium text-ink-100">
+            Perusahaan / Organisasi <span class="text-ink-400">(opsional)</span>
+          </label>
+          <input type="text" id="organisasi" name="organisasi" autocomplete="organization" class="field" placeholder="Tempat kamu bekerja atau komunitasmu" />
+        </div>
+
+        <div class="mt-5">
+          <label for="pesan" class="mb-2 block text-sm font-medium text-ink-100">
+            Pesan <span class="text-brand-400" aria-hidden="true">*</span>
+          </label>
+          <textarea
+            id="pesan"
+            name="pesan"
+            rows="4"
+            required
+            class="field resize-y"
+            placeholder="Ceritakan secara singkat apa yang sedang kamu hadapi atau diskusikan..."></textarea>
+        </div>
+
+        <div class="mt-7 flex flex-wrap items-center gap-4">
+          <button type="submit" id="submit-btn" class="btn btn-primary">
+            <span id="btn-label">Kirim Pesan</span>
+            <svg
+              id="btn-spinner"
+              class="hidden animate-spin"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4"></circle>
+              <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+            </svg>
+          </button>
+          <a
+            id="mailto-fallback"
+            class="text-sm text-ink-400 underline decoration-white/20 underline-offset-4 hover:text-brand-300"
+            href={`mailto:${emailOwner}`}
+          >
+            Atau kirim email langsung
+          </a>
+        </div>
+
+        <p id="form-status" class="mt-5 hidden rounded-lg border border-white/10 bg-white/4 px-4 py-3 text-sm" role="status" aria-live="polite"></p>
+
+        {
+          keyPending && (
+            <p class="mt-5 rounded-lg border border-amber-400/30 bg-amber-400/8 px-4 py-3 text-xs leading-relaxed text-amber-200">
+              Catatan teknis: kunci Web3Forms belum disetel (FORM-KEY-PENDING). Formulir tetap aman
+              dipakai lewat fallback email langsung. Setelah PUBLIC_WEB3FORMS_KEY diisi dan
+              di-rebuild, pengiriman otomatis aktif.
+            </p>
+          )
+        }
+      </form>
+
+      <!-- Kanal langsung -->
+      <aside class="space-y-5">
+        <div class="card p-6">
+          <h2 class="text-base font-semibold text-white">Kanal Langsung</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li>
+              <a href={`mailto:${emailOwner}`} class="text-ink-300 hover:text-brand-300">
+                ✉️ {emailOwner}
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://linkedin.com/in/samueljasonsantosa"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-ink-300 hover:text-brand-300"
+              >
+                LinkedIn: samueljasonsantosa <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://instagram.com/sammy_jason"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-ink-300 hover:text-brand-300"
+              >
+                Instagram: sammy_jason <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+          </ul>
+          <p class="mt-5 border-t border-white/8 pt-4 text-xs text-ink-400">
+            Rata-rata dibalas dalam 1x24 jam kerja.
+          </p>
+        </div>
+
+        <div class="card p-6">
+          <h2 class="text-base font-semibold text-white">Mau mengundang sebagai pembicara?</h2>
+          <p class="mt-2 text-sm text-ink-300">
+            Pilih persona Komunitas / Pembelajar, lalu tulis konteks acaramu: format, audiens,
+            dan tanggal target.
+          </p>
+          <a href="/kelas/" class="btn btn-secondary btn-sm mt-4">Lihat format sesi</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('kontak-form') as HTMLFormElement | null;
+  const btn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+  const btnLabel = document.getElementById('btn-label');
+  const spinner = document.getElementById('btn-spinner');
+  const status = document.getElementById('form-status');
+  const mailtoFallback = document.getElementById('mailto-fallback') as HTMLAnchorElement | null;
+
+  const ACCESS_KEY = (form?.querySelector('input[name="access_key"]') as HTMLInputElement | null)?.value ?? '';
+  const KEY_PENDING = ACCESS_KEY === 'FORM-KEY-PENDING';
+
+  // Preselect persona dari query ?topik=kelas (dipakai tombol di halaman /kelas).
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('topik') === 'kelas') {
+    const radio = document.getElementById('persona-komunitas') as HTMLInputElement | null;
+    if (radio) radio.checked = true;
+  }
+
+  function setStatus(message: string, kind: 'ok' | 'warn' | 'err') {
+    if (!status) return;
+    status.classList.remove('hidden');
+    status.classList.remove('border-brand-500/40', 'text-brand-300', 'border-amber-400/40', 'text-amber-200', 'border-red-400/40', 'text-red-300');
+    if (kind === 'ok') {
+      status.classList.add('border-brand-500/40', 'text-brand-300');
+    } else if (kind === 'warn') {
+      status.classList.add('border-amber-400/40', 'text-amber-200');
+    } else {
+      status.classList.add('border-red-400/40', 'text-red-300');
+    }
+    status.textContent = message;
+  }
+
+  function updateMailto(nama: string, email: string, organisasi: string, persona: string, pesan: string) {
+    if (!mailtoFallback || !form) return;
+    const owner = 'samueljasonsantosa@gmail.com';
+    const body = [
+      `Persona: ${persona}`,
+      `Nama: ${nama}`,
+      `Email: ${email}`,
+      organisasi ? `Organisasi: ${organisasi}` : '',
+      '',
+      pesan,
+    ]
+      .filter(Boolean)
+      .join('\n');
+    mailtoFallback.href = `mailto:${owner}?subject=${encodeURIComponent('Pesan baru dari sammyjason.com')}&body=${encodeURIComponent(body)}`;
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const persona = String(formData.get('persona') || '');
+    const nama = String(formData.get('nama') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const organisasi = String(formData.get('organisasi') || '').trim();
+    const pesan = String(formData.get('pesan') || '').trim();
+
+    if (!persona || !nama || !email || !pesan) {
+      setStatus('Lengkapi dulu field bertanda bintang, ya.', 'warn');
+      return;
+    }
+
+    updateMailto(nama, email, organisasi, persona, pesan);
+
+    if (KEY_PENDING) {
+      setStatus('Kunci form belum disetel. Pesanmu tidak terkirim otomatis; pakai tombol email langsung di bawah, isinya sudah disiapkan otomatis.', 'warn');
+      window.location.href = mailtoFallback?.href ?? `mailto:samueljasonsantosa@gmail.com`;
+      return;
+    }
+
+    if (btn) btn.disabled = true;
+    btnLabel?.classList.add('opacity-60');
+    spinner?.classList.remove('hidden');
+
+    try {
+      const payload = {
+        access_key: ACCESS_KEY,
+        subject: 'Pesan baru dari sammyjason.com',
+        from_name: 'sammyjason.com',
+        persona,
+        nama,
+        email,
+        organisasi,
+        pesan,
+      };
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStatus(`Terima kasih, ${nama}. Pesanmu sudah masuk. Saya baca semua dan balas sendiri, rata-rata dalam 1x24 jam kerja.`, 'ok');
+        form.reset();
+      } else {
+        throw new Error(data.message || 'Gagal mengirim pesan.');
+      }
+    } catch {
+      setStatus('Pengiriman otomatis gagal. Pesanmu sudah disiapkan di email langsung; klik tombol "Atau kirim email langsung" untuk mengirim.', 'err');
+    } finally {
+      if (btn) btn.disabled = false;
+      btnLabel?.classList.remove('opacity-60');
+      spinner?.classList.add('hidden');
+    }
+  });
+</script>

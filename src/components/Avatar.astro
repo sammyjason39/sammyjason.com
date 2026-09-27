@@ -1,0 +1,61 @@
+---
+// Komponen avatar Samuel Jason.
+// Slot foto asli: /public/sam.jpg. Kalau file itu ada, pakai foto.
+// Kalau tidak, fallback otomatis ke monogram inisial "SJ" (SVG gradien).
+const { size = 96, class: className = '' } = Astro.props as { size?: number; class?: string };
+const { existsSync } = await import('node:fs');
+const { join } = await import('node:path');
+const photoPath = join(process.cwd(), 'public', 'sam.jpg');
+const hasPhoto = existsSync(photoPath);
+---
+
+{
+  hasPhoto ? (
+    <img
+      src="/sam.jpg"
+      alt="Foto profil Samuel Jason (Samz)"
+      width={size}
+      height={size}
+      class:list={['rounded-full object-cover', className]}
+      loading="eager"
+      decoding="async"
+    />
+  ) : (
+    <span
+      class:list={['inline-block rounded-full overflow-hidden', className]}
+      style={`width:${size}px;height:${size}px`}
+      role="img"
+      aria-label="Avatar inisial SJ milik Samuel Jason"
+    >
+      <svg viewBox="0 0 128 128" width="100%" height="100%" aria-hidden="true">
+        <defs>
+          <linearGradient id="sj-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0ea472" />
+            <stop offset="55%" stop-color="#10b981" />
+            <stop offset="100%" stop-color="#0b5fd6" />
+          </linearGradient>
+          <linearGradient id="sj-grad-soft" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.32)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+          </linearGradient>
+        </defs>
+        <circle cx="64" cy="64" r="64" fill="url(#sj-grad)" />
+        <path d="M0 78 Q 40 48 128 84 L128 128 L0 128 Z" fill="url(#sj-grad-soft)" />
+        <circle cx="64" cy="64" r="60" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" />
+        <text
+          x="64"
+          y="66"
+          text-anchor="middle"
+          dominant-baseline="central"
+          font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+          font-size="50"
+          font-weight="700"
+          fill="#ffffff"
+          letter-spacing="1"
+        >
+          SJ
+        </text>
+      </svg>
+    </span>
+  )
+}

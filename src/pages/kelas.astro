@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const formats = [
+  {
+    name: 'Sesi Komunitas & Pembelajar Pemula',
+    format: 'Webinar interaktif atau hands-on coding session (1.5 - 2 jam)',
+    focus:
+      'Poin pendek, langsung praktik, membuat otomasi pertama tanpa pusing coding rumit.',
+  },
+  {
+    name: 'Corporate & Team AI Workshop',
+    format: 'Half-day / Full-day in-house workshop',
+    focus:
+      'Audit alur kerja internal, penerapan Framework 4M, pembuatan prototipe internal agent untuk divisi operasional/marketing/HR.',
+  },
+  {
+    name: 'Keynote Speaking, Panel & Podcast',
+    format: 'Konferensi industri, panel diskusi eksekutif, sesi podcast tamu',
+    focus:
+      'Topik favorit: "AI Agents di Meja Produksi Nyata", "Otomasi Alur Kerja Bisnis dengan n8n", "Masa Depan Literasi AI Indonesia".',
+  },
+];
+---
+
+<BaseLayout
+  title="Kelas, Workshop & Sesi Berbagi"
+  description="Undang Samuel Jason sebagai trainer, narasumber, atau pembicara: kelas komunitas, workshop AI korporat berbasis Framework 4M, keynote, panel, dan podcast."
+  path="/kelas/"
+>
+  <section class="container-site pt-16 pb-4 sm:pt-20">
+    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+      Kelas, Workshop &amp; Sesi Berbagi
+    </h1>
+    <p class="mt-5 max-w-2xl text-lg text-ink-300">
+      Kalau kamu butuh orang yang ngobrol soal AI dengan bahasa manusia, saya siap.
+    </p>
+  </section>
+
+  <section class="container-site pt-10">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Format Sesi yang Tersedia</h2>
+    <div class="mt-8 grid gap-5 lg:grid-cols-3">
+      {
+        formats.map((f, i) => (
+          <article class="card p-6 flex flex-col">
+            <span class="pill mb-4">Format {i + 1}</span>
+            <h3 class="text-lg font-semibold leading-snug text-white">{f.name}</h3>
+            <p class="mt-3 text-sm font-medium text-brand-300">{f.format}</p>
+            <p class="mt-3 text-sm leading-relaxed text-ink-300">{f.focus}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-site py-20">
+    <h2 class="text-2xl font-bold text-white sm:text-3xl">Pertanggungjawaban &amp; Etika Berbagi</h2>
+    <figure class="card mt-8 max-w-3xl border-l-2 border-l-brand-500 p-7">
+      <blockquote class="text-base leading-relaxed text-ink-300">
+        <p>
+          Saya tidak menerima undangan yang meminta saya menjual ilusi "AI akan menggantikan semua
+          pegawai besok pagi". Materi saya selalu berangkat dari realitas teknis, etika data, dan
+          keberlanjutan operasional.
+        </p>
+      </blockquote>
+      <figcaption class="mt-4 text-sm font-medium text-ink-400">Catatan Samz</figcaption>
+    </figure>
+
+    <div class="card mt-10 max-w-3xl border-brand-500/25 bg-gradient-to-br from-brand-500/8 to-transparent p-7">
+      <h3 class="text-xl font-semibold text-white">
+        Ingin mengundang saya di acara tim atau komunitasmu?
+      </h3>
+      <a href="/kontak/?topik=kelas" class="btn btn-primary mt-5">Diskusikan Jadwal &amp; Kebutuhan</a>
+    </div>
+  </section>
+</BaseLayout>

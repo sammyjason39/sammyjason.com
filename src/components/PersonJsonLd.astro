@@ -1,0 +1,22 @@
+---
+import { SITE_URL, SITE_NAME, SOCIAL_LINKS } from '../lib/site';
+---
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Samuel Jason',
+    alternateName: 'Samz',
+    jobTitle: 'Chief Technology Officer',
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Conextlab Technology',
+    },
+    url: SITE_URL,
+    sameAs: SOCIAL_LINKS.map((s) => s.href),
+  })}
+/>
+
+<!-- JSON-LD Person: {SITE_NAME} root/tentang -->

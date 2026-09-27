@@ -1,0 +1,65 @@
+---
+import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../lib/site';
+
+export interface PageSeoProps {
+  title: string;
+  description: string;
+  /** Path kanonikal, misal "/tentang/". Kosong berarti root. */
+  path?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  noindex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+}
+
+const {
+  title,
+  description,
+  path = '/',
+  ogType = 'website',
+  ogImage = '/og.png',
+  noindex = false,
+  publishedTime,
+  modifiedTime,
+  tags = [],
+} = Astro.props as PageSeoProps;
+
+const canonical = new URL(path, SITE_URL);
+const image = new URL(ogImage, SITE_URL);
+// Pola judul PRD 5.2: [Judul Halaman] | Samuel Jason. Halaman yang sudah
+// membawa nama lengkap (misal beranda) tidak di-suffix dua kali.
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="id_ID" />
+
+{ogType === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{ogType === 'article' && modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+{ogType === 'article' && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+{ogType === 'article' && <meta property="article:author" content="Samuel Jason" />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+
+<meta name="theme-color" content="#04060d" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Tagline: {SITE_TAGLINE} -->

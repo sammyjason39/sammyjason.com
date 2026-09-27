@@ -1,0 +1,116 @@
+---
+import { NAV_LINKS } from '../lib/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path === href.slice(0, -1);
+
+// Slot script conditional untuk analytics (PRD section 7 item 4):
+// zero tracker default; hanya aktif kalau PUBLIC_GA_ID diset di environment.
+const gaId = import.meta.env.PUBLIC_GA_ID;
+---
+
+<header class="sticky top-0 z-50 border-b border-white/8 bg-[#04060d]/85 backdrop-blur-md">
+  <div class="container-site flex h-16 items-center justify-between gap-4">
+    <a href="/" class="text-lg font-semibold text-white tracking-tight">Samz</a>
+
+    <nav class="hidden md:flex items-center gap-1" aria-label="Navigasi utama">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              isActive(link.href)
+                ? 'text-brand-300 bg-white/6'
+                : 'text-ink-300 hover:text-white hover:bg-white/5',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="hidden md:block">
+      <a href="/kontak/" class="btn btn-primary btn-sm">Mulai ngobrol</a>
+    </div>
+
+    <button
+      id="nav-toggle"
+      type="button"
+      class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-ink-100"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Buka menu navigasi"
+    >
+      <svg id="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+      <svg id="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="hidden" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden border-t border-white/8 bg-[#090d18] px-5 pt-3 pb-24"
+  >
+    <nav class="flex flex-col gap-1" aria-label="Navigasi mobile">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            aria-current={isActive(link.href) ? 'page' : undefined}
+            class:list={[
+              'rounded-lg px-3 py-3 text-base font-medium',
+              isActive(link.href) ? 'text-brand-300 bg-white/6' : 'text-ink-100 hover:bg-white/5',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+    <a href="/kontak/" class="btn btn-primary mt-4">Mulai ngobrol</a>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      menu.classList.toggle('hidden');
+      iconOpen?.classList.toggle('hidden');
+      iconClose?.classList.toggle('hidden');
+      toggle.setAttribute(
+        'aria-label',
+        expanded ? 'Buka menu navigasi' : 'Tutup menu navigasi'
+      );
+    });
+  }
+</script>
+
+{
+  gaId && (
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+  )
+}
+{
+  gaId && (
+    <script is:inline define:vars={{ gaId }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', gaId);
+    </script>
+  )
+}
