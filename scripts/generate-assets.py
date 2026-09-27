@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC = os.path.join(ROOT, 'public')
 os.makedirs(os.path.join(PUBLIC, 'images', 'blog'), exist_ok=True)
+os.makedirs(os.path.join(PUBLIC, 'og'), exist_ok=True)
 
 W, H = 1200, 630
 HERO_W, HERO_H = 1600, 900
@@ -159,6 +160,25 @@ if __name__ == '__main__':
         ['Catatan Lapangan', '& Rekayasa AI'],
         category=None,
         out='og.png',
+    )
+    # OG card 1200x630 per artikel (PRD 5.2: og:image statis 1200x630)
+    make_og(
+        ['Setup Hermes Free,', 'But Do It Like an Operator'],
+        category='Build Logs',
+        out='og/setup-hermes-free-operator.png',
+        monogram_r=92,
+    )
+    make_og(
+        ['Adaptasi AI Mulai', 'dari Alur Kerja,', 'Bukan Beli Tools'],
+        category='Framework 4M',
+        out='og/perusahaan-mulai-adaptasi-ai-alur-kerja.png',
+        monogram_r=92,
+    )
+    make_og(
+        ['Anatomi AI Agent', 'di Lingkungan Produksi'],
+        category='Catatan CTO',
+        out='og/anatomi-ai-agent-produksi-conextlab.png',
+        monogram_r=92,
     )
     make_hero(
         'setup-hermes-free-operator',

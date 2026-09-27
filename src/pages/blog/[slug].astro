@@ -66,6 +66,8 @@ const jsonLd = {
     '@id': canonical,
   },
   image: new URL(heroImage ?? '/og.png', SITE_URL).href,
+  // OG image JSON-LD: versi 1200x630 bila tersedia (PRD 5.2).
+  image1200: new URL(`/og/${post.id}.png`, SITE_URL).href,
   articleSection: cat?.label ?? category,
   keywords: tags.join(', '),
   inLanguage: 'id-ID',
@@ -77,7 +79,7 @@ const jsonLd = {
   description={description}
   path={`/blog/${post.id}/`}
   ogType="article"
-  ogImage={heroImage ?? '/og.png'}
+  ogImage={`/og/${post.id}.png`}
   publishedTime={pubDate.toISOString()}
   modifiedTime={(updatedDate ?? pubDate).toISOString()}
   tags={tags}
