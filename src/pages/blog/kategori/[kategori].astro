@@ -5,9 +5,9 @@ import ArticleCard from '../../../components/ArticleCard.astro';
 import { CATEGORIES, readingTime } from '../../../lib/site';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const categories = new Set(posts.map((p) => p.data.category));
-  return [...categories].map((category) => ({
+  await getCollection('blog', ({ data }) => !data.draft);
+  // Keempat kategori kontrak PRD 4.6 selalu punya halaman arsip, meski belum ada artikelnya.
+  return Object.keys(CATEGORIES).map((category) => ({
     params: { kategori: category },
     props: { category },
   }));
