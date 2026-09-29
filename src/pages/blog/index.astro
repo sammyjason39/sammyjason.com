@@ -48,7 +48,7 @@ const categoryPills = [
           <a
             href={pill.href}
             aria-current={pill.active ? 'page' : undefined}
-            class:list={['pill', pill.active ? '' : 'pill-neutral hover:border-brand-500/40']}
+            class:list={['pill', pill.active ? 'border-brand-400/60 bg-brand-100 text-brand-600' : 'bg-white hover:border-brand-400/40']}
           >
             {pill.label}
           </a>

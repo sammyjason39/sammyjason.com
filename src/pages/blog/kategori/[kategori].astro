@@ -6,7 +6,7 @@ import { CATEGORIES, readingTime } from '../../../lib/site';
 
 export async function getStaticPaths() {
   await getCollection('blog', ({ data }) => !data.draft);
-  // Keempat kategori kontrak PRD 4.6 selalu punya halaman arsip, meski belum ada artikelnya.
+  // PRD 4.6: 4 kategori archive selalu digenerate.
   return Object.keys(CATEGORIES).map((category) => ({
     params: { kategori: category },
     props: { category },
@@ -63,7 +63,7 @@ const categoryPills = [
           <a
             href={pill.href}
             aria-current={pill.active ? 'page' : undefined}
-            class:list={['pill', pill.active ? '' : 'pill-neutral hover:border-brand-500/40']}
+            class:list={['pill', pill.active ? 'border-brand-400/60 bg-brand-100 text-brand-600' : 'bg-white hover:border-brand-400/40']}
           >
             {pill.label}
           </a>

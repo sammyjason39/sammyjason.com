@@ -2,7 +2,7 @@
 """Generate static image assets for sammyjason.com:
 - public/og.png (1200x630) default OpenGraph card
 - public/images/blog/<slug>.webp (1600x900) article hero images
-Dark modern, brand green -> blue gradient, no external fonts (DejaVu Sans bundled).
+Light cement-gray theme, Conextlab blue accents, no external fonts (DejaVu Sans bundled).
 """
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -18,9 +18,13 @@ HERO_W, HERO_H = 1600, 900
 DEJAVU = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 DEJAVU_BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 
-GREEN = (16, 185, 129)
-BLUE = (11, 95, 214)
-NIGHT = (4, 6, 13)
+GREEN = (22, 82, 240)
+BLUE = (30, 64, 175)
+NIGHT = (245, 245, 244)
+PANEL = (236, 234, 230)
+INK = (10, 10, 10)
+SOFT_BLUE = (110, 142, 250)
+SOFT_TEXT = (30, 64, 175)
 
 
 def vertical_gradient(w, h, top, bottom):
@@ -66,13 +70,13 @@ def draw_monogram(img, cx, cy, r, ring=True):
     d = ImageDraw.Draw(img)
     # gradient circle via mask
     size = r * 2
-    grad = diagonal_gradient(size, size, GREEN, BLUE)
+    grad = diagonal_gradient(size, size, (22, 82, 240), (10, 10, 10))
     mask = Image.new('L', (size, size), 0)
     md = ImageDraw.Draw(mask)
     md.ellipse([0, 0, size, size], fill=255)
     img.paste(grad, (cx - r, cy - r), mask)
     if ring:
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(255, 255, 255, 90), width=3)
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=(220, 229, 254, 110), width=6)
     f = ImageFont.truetype(DEJAVU_BOLD, int(r * 0.72))
     bbox = d.textbbox((0, 0), 'SJ', font=f)
     tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -81,14 +85,14 @@ def draw_monogram(img, cx, cy, r, ring=True):
 
 def footer_line(d, w, h, tagline):
     f_small = ImageFont.truetype(DEJAVU, 26)
-    d.text((80, h - 90), 'samueljason  ·  sammyjason.com', font=f_small, fill=(147, 163, 192))
-    d.text((80, h - 56), tagline, font=f_small, fill=(110, 231, 183))
+    d.text((80, h - 90), 'samueljason  ·  sammyjason.com', font=f_small, fill=(107, 114, 128))
+    d.text((80, h - 56), tagline, font=f_small, fill=SOFT_TEXT)
 
 
 def make_og(title_lines, category=None, out='og.png', w=W, h=H, monogram_r=110):
-    img = diagonal_gradient(w, h, NIGHT, (9, 13, 24))
-    img = overlay_radial(img, (int(w * 0.88), int(h * 0.06)), int(w * 0.5), GREEN, alpha_peak=36)
-    img = overlay_radial(img, (int(w * 0.02), int(h * 1.02)), int(w * 0.42), BLUE, alpha_peak=30)
+    img = diagonal_gradient(w, h, NIGHT, PANEL)
+    img = overlay_radial(img, (int(w * 0.88), int(h * 0.06)), int(w * 0.5), SOFT_BLUE, alpha_peak=36)
+    img = overlay_radial(img, (int(w * 0.02), int(h * 1.02)), int(w * 0.42), SOFT_BLUE, alpha_peak=30)
     d = ImageDraw.Draw(img)
 
     # monogram avatar
@@ -104,18 +108,18 @@ def make_og(title_lines, category=None, out='og.png', w=W, h=H, monogram_r=110):
         d.rounded_rectangle(
             [80, y, 80 + tw + pad_x * 2, y + 30 + bbox[1] + bbox[3] + pad_y * 2],
             radius=999,
-            fill=(16, 185, 129, 26),
-            outline=(52, 211, 153),
+            fill=(220, 229, 254, 160),
+            outline=(30, 64, 175),
             width=2,
         )
-        d.text((80 + pad_x, y + pad_y - bbox[1] + 4), category, font=f_cat, fill=(110, 231, 183))
+        d.text((80 + pad_x, y + pad_y - bbox[1] + 4), category, font=f_cat, fill=SOFT_TEXT)
         y += 30 + bbox[1] + bbox[3] + pad_y * 2 + 36
 
     # title lines
     f_title = ImageFont.truetype(DEJAVU_BOLD, 64)
     line_h = 84
     for line in title_lines:
-        d.text((80, y), line, font=f_title, fill=(231, 236, 245))
+        d.text((80, y), line, font=f_title, fill=INK)
         y += line_h
 
     # accent bar
@@ -128,27 +132,27 @@ def make_og(title_lines, category=None, out='og.png', w=W, h=H, monogram_r=110):
 
 def make_hero(slug, title_lines, category, out):
     w, h = HERO_W, HERO_H
-    img = diagonal_gradient(w, h, NIGHT, (13, 19, 34))
-    img = overlay_radial(img, (int(w * 0.85), int(h * 0.1)), int(w * 0.45), GREEN, alpha_peak=34)
-    img = overlay_radial(img, (int(w * 0.05), int(h * 0.95)), int(w * 0.4), BLUE, alpha_peak=28)
+    img = diagonal_gradient(w, h, NIGHT, PANEL)
+    img = overlay_radial(img, (int(w * 0.85), int(h * 0.1)), int(w * 0.45), SOFT_BLUE, alpha_peak=34)
+    img = overlay_radial(img, (int(w * 0.05), int(h * 0.95)), int(w * 0.4), SOFT_BLUE, alpha_peak=28)
     d = ImageDraw.Draw(img)
 
     draw_monogram(img, w - 70 - 130, 70 + 130, 130)
 
     f_cat = ImageFont.truetype(DEJAVU_BOLD, 34)
-    d.text((90, 110), category.upper(), font=f_cat, fill=(110, 231, 183))
+    d.text((90, 110), category.upper(), font=f_cat, fill=SOFT_TEXT)
 
     y = 190
     f_title = ImageFont.truetype(DEJAVU_BOLD, 78)
     line_h = 102
     for line in title_lines:
-        d.text((90, y), line, font=f_title, fill=(231, 236, 245))
+        d.text((90, y), line, font=f_title, fill=INK)
         y += line_h
 
     d.rectangle([90, y + 24, 90 + 150, y + 32], fill=GREEN)
 
     f_small = ImageFont.truetype(DEJAVU, 30)
-    d.text((90, h - 110), 'samueljason  ·  sammyjason.com/blog', font=f_small, fill=(147, 163, 192))
+    d.text((90, h - 110), 'samueljason  ·  sammyjason.com/blog', font=f_small, fill=(107, 114, 128))
 
     path = os.path.join(PUBLIC, 'images', 'blog', out)
     img.save(path, 'WEBP', quality=82, method=6)

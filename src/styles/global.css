@@ -1,23 +1,43 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@theme {
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
+/* ---------- Font: Plus Jakarta Sans (self-hosted, variabel, subset latin) ---------- */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../fonts/pjs-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../fonts/pjs-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-  --color-ink-50: #fafafa;
-  --color-ink-100: #f4f4f5;
+@theme {
+  /* Brand: biru Conextlab */
+  --color-brand-50: #eef3fe;
+  --color-brand-100: #dce5fe;
+  --color-brand-200: #c3d2fc;
+  --color-brand-300: #1e40af;
+  --color-brand-400: #1652f0;
+  --color-brand-500: #1652f0;
+  --color-brand-600: #1e40af;
+  --color-brand-700: #1a3899;
+  --color-brand-800: #142c78;
+  --color-brand-900: #0e1f52;
+
+  /* Netral tinta untuk tema terang */
+  --color-ink-50: #f5f5f4;
+  --color-ink-100: #0f0f10;
   --color-ink-200: #e4e4e7;
-  --color-ink-300: #d4d4d8;
-  --color-ink-400: #a1a1aa;
+  --color-ink-300: #45454d;
+  --color-ink-400: #6b7280;
   --color-ink-500: #71717a;
   --color-ink-600: #52525b;
   --color-ink-700: #3f3f46;
@@ -25,31 +45,81 @@
   --color-ink-900: #18181b;
   --color-ink-950: #09090b;
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 @layer base {
+  :root {
+    --ink: #0a0a0a;
+    --blue: #1652f0;
+    --blue-2: #1e40af;
+    --blue-soft: #dce5fe;
+    --surface: #ffffff;
+    --cement: #f5f5f4;
+    --cement-2: #eceae6;
+    --mist: #f8fafc;
+    --mist-2: #f1f5f9;
+    --hairline: #e5e7eb;
+    --hairline-strong: #d6d3d1;
+    --muted: #6b7280;
+    --ink-soft: #45454d;
+  }
+
   html {
-    color-scheme: dark;
+    color-scheme: light;
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: #04060d;
-    color: #e4e4e7;
+    background-color: var(--cement);
+    color: var(--ink);
     font-family: var(--font-sans);
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.65;
     overflow-x: hidden;
   }
 
   ::selection {
-    background-color: rgba(16, 185, 129, 0.3);
-    color: #ffffff;
+    background-color: rgba(22, 82, 240, 0.16);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
   }
 }
 
-/* Utilitas layout & kontainer */
+/* ---------- Netralisasi kelas warisan tema gelap (markup tidak diubah massal) ---------- */
+.text-white { color: var(--ink); }
+.text-ink-100 { color: var(--ink); }
+.text-ink-300 { color: var(--ink-soft); }
+.text-ink-400 { color: var(--muted); }
+
+.border-white\/8,
+.border-white\/10,
+.border-white\/12 { border-color: var(--hairline); }
+
+.ring-white\/15 { --tw-ring-color: var(--hairline-strong); }
+.decoration-white\/20 { text-decoration-color: var(--hairline-strong); }
+
+/* Overlay putih tema gelap di elemen spesifik */
+a.bg-white\/6 { background-color: var(--blue-soft); }
+a.hover\:bg-white\/5:hover { background-color: var(--mist-2); }
+.bg-white\/4 { background-color: var(--mist); }
+
+/* Status formulir ke tema terang */
+.text-amber-200 { color: #92400e; }
+.text-amber-100 { color: #92400e; }
+.border-amber-400\/30,
+.border-amber-400\/40 { border-color: rgba(217, 119, 6, 0.35); }
+.bg-amber-400\/8 { background-color: #fffbeb; }
+.text-red-300 { color: #b91c1c; }
+.border-red-400\/40 { border-color: rgba(220, 38, 38, 0.35); }
+.border-brand-500\/40 { border-color: rgba(22, 82, 240, 0.4); }
+
+/* ---------- Utilitas layout & kontainer ---------- */
 .container-site {
   width: 100%;
   max-width: 72rem;
@@ -73,7 +143,7 @@
   left: 1rem;
   z-index: 100;
   padding: 0.75rem 1.25rem;
-  background-color: #10b981;
+  background-color: var(--blue);
   color: #ffffff;
   font-weight: 600;
   border-radius: 0.5rem;
@@ -86,8 +156,8 @@
 
 /* Kartu & Container */
 .card {
-  background-color: #090d18;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
   border-radius: 0.875rem;
 }
 
@@ -96,8 +166,8 @@
 }
 
 .card-hover:hover {
-  border-color: rgba(16, 185, 129, 0.35);
-  background-color: #0c1222;
+  border-color: rgba(22, 82, 240, 0.3);
+  box-shadow: 0 8px 30px -12px rgba(10, 10, 10, 0.12);
   transform: translateY(-2px);
 }
 
@@ -107,20 +177,20 @@
   align-items: center;
   gap: 0.375rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--hairline);
+  background-color: var(--mist);
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
-  font-weight: 500;
-  color: #a1a1aa;
+  font-weight: 600;
+  color: var(--muted);
 }
 
-/* Tombol */
+/* Tombol (gaya Conextlab: pill, ink) */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
+  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -129,38 +199,38 @@
 }
 
 .btn-primary {
-  background-color: #10b981;
+  background-color: var(--ink);
   color: #ffffff;
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 2px 0 rgba(10, 10, 10, 0.08);
 }
 
 .btn-primary:hover {
-  background-color: #059669;
+  background-color: var(--blue);
 }
 
 .btn-secondary {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #f4f4f5;
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
+  border: 1px solid var(--hairline-strong);
+  background-color: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
 }
 
 .btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--mist-2);
+  border-color: #c7c4bf;
 }
 
 .btn-sm {
-  padding: 0.375rem 0.875rem;
-  font-size: 0.75rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.8rem;
 }
 
 /* Typography & Prose Styling */
 .prose-custom {
-  color: #d4d4d8;
+  color: var(--ink-soft);
   max-width: none;
 }
 
@@ -168,9 +238,9 @@
 .prose-custom h2,
 .prose-custom h3,
 .prose-custom h4 {
-  color: #ffffff;
+  color: var(--ink);
   font-weight: 700;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
   margin-top: 2rem;
   margin-bottom: 1rem;
 }
@@ -184,7 +254,7 @@
   font-size: 1.5rem;
   line-height: 1.3;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--hairline);
 }
 
 .prose-custom h3 {
@@ -195,22 +265,22 @@
 .prose-custom p {
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
-  line-height: 1.75;
+  line-height: 1.65;
 }
 
 .prose-custom a {
-  color: #34d399;
+  color: var(--blue-2);
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 500;
 }
 
 .prose-custom a:hover {
-  color: #6ee7b7;
+  color: var(--blue);
 }
 
 .prose-custom strong {
-  color: #ffffff;
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -224,7 +294,7 @@
 .prose-custom li {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .prose-custom ul > li {
@@ -239,10 +309,10 @@
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   padding-left: 1.25rem;
-  border-left: 3px solid #10b981;
-  color: #d4d4d8;
+  border-left: 3px solid var(--blue);
+  color: var(--ink-soft);
   font-style: normal;
-  background-color: rgba(16, 185, 129, 0.05);
+  background-color: var(--mist);
   border-radius: 0 0.5rem 0.5rem 0;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -250,8 +320,8 @@
 }
 
 .prose-custom code:not(pre code) {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #6ee7b7;
+  background-color: var(--blue-soft);
+  color: var(--blue-2);
   padding: 0.2rem 0.4rem;
   border-radius: 0.375rem;
   font-size: 0.875em;
@@ -262,7 +332,7 @@
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background-color: #0b0f19 !important;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -282,31 +352,32 @@
   margin: 1.5rem 0;
   border-left-width: 4px;
   border-radius: 0 0.5rem 0.5rem 0;
+  color: var(--ink-soft);
 }
 
 .markdown-alert-note {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.08);
+  border-color: var(--blue);
+  background-color: #eff4fe;
 }
 
 .markdown-alert-tip {
-  border-color: #10b981;
-  background-color: rgba(16, 185, 129, 0.08);
+  border-color: var(--blue-2);
+  background-color: #f0f4ff;
 }
 
 .markdown-alert-important {
-  border-color: #8b5cf6;
-  background-color: rgba(139, 92, 246, 0.08);
+  border-color: var(--blue);
+  background-color: var(--blue-soft);
 }
 
 .markdown-alert-warning {
-  border-color: #f59e0b;
-  background-color: rgba(245, 158, 11, 0.08);
+  border-color: #d97706;
+  background-color: #fffbeb;
 }
 
 .markdown-alert-caution {
-  border-color: #ef4444;
-  background-color: rgba(239, 68, 68, 0.08);
+  border-color: #dc2626;
+  background-color: #fef2f2;
 }
 
 .markdown-alert-title {
@@ -318,11 +389,11 @@
   font-size: 0.875rem;
 }
 
-.markdown-alert-note .markdown-alert-title { color: #60a5fa; }
-.markdown-alert-tip .markdown-alert-title { color: #34d399; }
-.markdown-alert-important .markdown-alert-title { color: #a78bfa; }
-.markdown-alert-warning .markdown-alert-title { color: #fbbf24; }
-.markdown-alert-caution .markdown-alert-title { color: #f87171; }
+.markdown-alert-note .markdown-alert-title { color: var(--blue-2); }
+.markdown-alert-tip .markdown-alert-title { color: var(--blue-2); }
+.markdown-alert-important .markdown-alert-title { color: var(--blue-2); }
+.markdown-alert-warning .markdown-alert-title { color: #b45309; }
+.markdown-alert-caution .markdown-alert-title { color: #b91c1c; }
 
 /* ---------- Komponen tambahan ---------- */
 
@@ -331,55 +402,55 @@ a.pill {
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 a.pill:hover {
-  border-color: rgba(16, 185, 129, 0.45);
-  color: #6ee7b7;
+  border-color: rgba(22, 82, 240, 0.45);
+  color: var(--blue-2);
 }
 a.pill[aria-current="page"] {
-  border-color: rgba(16, 185, 129, 0.5);
-  color: #6ee7b7;
-  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(22, 82, 240, 0.5);
+  color: var(--blue-2);
+  background-color: var(--blue-soft);
 }
 
 /* Input formulir kontak */
 .field {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: var(--surface);
+  border: 1px solid var(--hairline-strong);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
-  color: #f4f4f5;
+  color: var(--ink);
   font-size: 0.95rem;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .field::placeholder {
-  color: #a1a1aa;
+  color: #9ca3af;
 }
 .field:focus {
   outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 1px #10b981;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(22, 82, 240, 0.14);
 }
 
 /* Pertanyaan penyaring segmented (radio kartu) */
 .segment {
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--hairline);
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--surface);
   transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .segment:hover {
-  border-color: rgba(16, 185, 129, 0.4);
+  border-color: rgba(22, 82, 240, 0.4);
 }
 .segment:has(input:checked) {
-  border-color: #10b981;
-  background-color: rgba(16, 185, 129, 0.1);
-  box-shadow: 0 0 0 1px #10b981;
+  border-color: var(--blue);
+  background-color: var(--blue-soft);
+  box-shadow: 0 0 0 1px var(--blue);
 }
 .segment:has(input:focus-visible) {
-  outline: 2px solid #34d399;
+  outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
 
@@ -388,7 +459,7 @@ a.pill[aria-current="page"] {
   position: relative;
   padding-left: 2rem;
   padding-bottom: 1.75rem;
-  border-left: 1px solid #27272a;
+  border-left: 1px solid var(--hairline-strong);
   margin-left: 0.5rem;
 }
 .timeline-item:last-child {
@@ -403,12 +474,12 @@ a.pill[aria-current="page"] {
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 999px;
-  background: #10b981;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+  background: var(--blue);
+  box-shadow: 0 0 0 4px rgba(22, 82, 240, 0.15);
 }
 
 /* Variasi kartu CTA beraksen */
 .card-accent {
-  border-color: rgba(16, 185, 129, 0.25);
-  background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.08), transparent 60%);
+  border-color: rgba(22, 82, 240, 0.22);
+  background-image: linear-gradient(135deg, rgba(22, 82, 240, 0.05), transparent 60%);
 }

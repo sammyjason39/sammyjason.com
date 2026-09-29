@@ -141,7 +141,7 @@ const jsonLd = {
 
     {
       leadAsset && (
-        <aside class="card mt-12 p-6 border-brand-500/25 bg-gradient-to-br from-brand-500/8 to-transparent">
+        <aside class="card card-accent mt-12 p-6">
           <p class="pill mb-3">Lead Magnet</p>
           <h2 class="text-lg font-semibold text-white">{leadAsset.title}</h2>
           <p class="mt-2 text-sm text-ink-300">
@@ -224,10 +224,10 @@ const jsonLd = {
         try {
           await navigator.clipboard.writeText(code);
           button.textContent = 'Tersalin!';
-          button.classList.add('text-emerald-400');
+          button.classList.add('text-brand-400');
           setTimeout(() => {
             button.textContent = 'Salin';
-            button.classList.remove('text-emerald-400');
+            button.classList.remove('text-brand-400');
           }, 2000);
         } catch (e) {
           button.textContent = 'Gagal';

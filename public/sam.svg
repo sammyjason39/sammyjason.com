@@ -1,18 +1,6 @@
-<svg viewBox="0 0 128 128" width="128" height="128" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="sj-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0ea472" />
-      <stop offset="55%" stop-color="#10b981" />
-      <stop offset="100%" stop-color="#0b5fd6" />
-    </linearGradient>
-    <linearGradient id="sj-grad-soft" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.32)" />
-      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-    </linearGradient>
-  </defs>
-  <circle cx="64" cy="64" r="64" fill="url(#sj-grad)" />
-  <path d="M0 78 Q 40 48 128 84 L128 128 L0 128 Z" fill="url(#sj-grad-soft)" />
-  <circle cx="64" cy="64" r="60" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <circle cx="64" cy="64" r="64" fill="#0a0a0a" />
+  <circle cx="64" cy="64" r="59" fill="none" stroke="#1652f0" stroke-width="6" />
   <text
     x="64"
     y="66"
