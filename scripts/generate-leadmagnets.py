@@ -56,6 +56,9 @@ SMALL = ParagraphStyle("SMALL", parent=ss["Normal"], fontName=FONT, fontSize=8, 
 CELL = ParagraphStyle("CELL", parent=ss["Normal"], fontName=FONT, fontSize=8.5, leading=11.5,
                       textColor=INK)
 CELLB = ParagraphStyle("CELLB", parent=CELL, fontName=FONT_B)
+CODE = ParagraphStyle("CODE", parent=ss["Normal"], fontName="Courier", fontSize=7.2, leading=9.2,
+                      textColor=colors.HexColor("#14213D"), spaceAfter=0,
+                      leftIndent=0, backColor=colors.HexColor("#F5F5F4"))
 
 
 def footer(canvas, doc, owner_line):
@@ -86,6 +89,19 @@ def build(path, title, subtitle, blocks, owner_line):
             flow.append(Paragraph(payload, SMALL))
         elif kind == "gap":
             flow.append(Spacer(1, payload))
+        elif kind == "code":
+            lines = payload.strip("\n").split("\n")
+            t = Table([[Paragraph(l.replace(" ", "&nbsp;"), CODE)] for l in lines],
+                      colWidths=[174 * mm])
+            t.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#F5F5F4")),
+                ("BOX", (0, 0), (-1, -1), 0.5, LINE),
+                ("TOPPADDING", (0, 0), (-1, -1), 0.5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0.5),
+                ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+            ]))
+            flow.append(t)
         elif kind == "table":
             head, rows, widths = payload
             data = [[Paragraph(c, CELLB) for c in head]]
@@ -119,6 +135,7 @@ build(
         ("p", "Pilih satu proses yang paling banyak membuang waktu atau paling sering bocor "
               "informasi. Isi kolom kanan sejujur mungkin. Kalau ada kolom yang belum bisa "
               "dijawab, itu justru temuan: prosesnya belum siap dibantu AI."),
+        ("h2", "Lembar evaluasi alur kerja"),
         ("table", (
             ["Bagian", "Isi", "Pertanyaan pemandu"],
             [
@@ -135,6 +152,24 @@ build(
             ],
             [26, 52, 96],
         )),
+        ("h2", "Panduan pemetaan tugas repetitif berbiaya tinggi"),
+        ("p", "Daftar tugas yang paling sering menyedot jam kerja tim. Tandai mana yang terjadi "
+              "di perusahaanmu, lalu urutkan berdasarkan jam kerja yang terbuang per bulan."),
+        ("table", (
+            ["Tugas repetitif", "Terjadi?", "Frekuensi", "Jam kerja terbuang per bulan"],
+            [
+                ["Pencocokan manual tagihan vendor dengan bukti potong dan surat jalan", "", "", ""],
+                ["Rekapitulasi laporan penjualan harian dari banyak gerai", "", "", ""],
+                ["Sortir dan klasifikasi keluhan pelanggan yang masuk", "", "", ""],
+                ["Menyalin data dari dokumen ke spreadsheet atau sistem lain", "", "", ""],
+                ["Menyusun laporan rutin dari beberapa sumber data berbeda", "", "", ""],
+                ["Menjawab pertanyaan pelanggan yang berulang", "", "", ""],
+                ["Memeriksa kelengkapan berkas sebelum diproses lebih lanjut", "", "", ""],
+            ],
+            [64, 20, 26, 64],
+        )),
+        ("small", "Urutkan dari jam kerja terbuang paling besar. Tugas teratas itulah kandidat "
+                  "pilot paling waras, bukan tugas yang paling menarik secara teknis."),
         ("h2", "Skor kelayakan pilot (1 rendah sampai 5 tinggi)"),
         ("table", (
             ["Pertanyaan", "1", "2", "3", "4", "5"],
@@ -182,6 +217,41 @@ build(
             ],
             [26, 148],
         )),
+        ("h2", "Kalkulator risiko data internal"),
+        ("p", "Hitung skor untuk setiap jenis data yang akan disentuh proses ini. Skor tinggi "
+              "berarti data itu tidak boleh masuk ke model publik, atau hanya boleh setelah "
+              "dianonimkan. Skor rendah berarti aman untuk diproses."),
+        ("table", (
+            ["Jenis data", "Sensitivitas (1-5)", "Boleh ke model publik?", "Boleh ke model privat?"],
+            [
+                ["Nama dan kontak pelanggan", "", "", ""],
+                ["Nomor identitas, NPWP, rekening", "", "", ""],
+                ["Data keuangan dan harga beli", "", "", ""],
+                ["Dokumen kontrak dan legal", "", "", ""],
+                ["Kredensial, kunci API, akses sistem", "", "", ""],
+                ["Data kesehatan atau personal sensitif", "", "", ""],
+                ["Dokumen internal non-rahasia", "", "", ""],
+            ],
+            [62, 30, 42, 40],
+        )),
+        ("small", "Aturan praktis: sensivitas 4 atau 5 berarti jangan pernah ke model publik, "
+                  "dan tetap butuh pencatatan akses di model privat. Kalau tidak yakin, anggap "
+                  "paling sensitif sampai terbukti sebaliknya."),
+        ("h2", "Indikator kesiapan otomatisasi"),
+        ("table", (
+            ["Indikator", "Belum siap", "Cukup siap", "Siap"],
+            [
+                ["SOP proses tertulis", "Hanya di kepala satu orang", "Ada catatan tidak rapi", "Tertulis dan dipakai tim"],
+                ["Pemilik proses", "Tidak jelas", "Ada tapi rangkap tugas", "Satu nama, satu tanggung jawab"],
+                ["Kualitas data masukan", "Sering salah dan tidak standar", "Sebagian standar", "Tervalidasi di titik masuk"],
+                ["Cara mengukur hasil", "Belum ada ukuran", "Ada tapi tidak rutin diukur", "Baseline dan KPI ditetapkan"],
+                ["Kesiapan tim", "Menolak atau belum tahu", "Ragu tapi mau coba", "Ada yang mau jadi pilot owner"],
+            ],
+            [42, 46, 42, 44],
+        )),
+        ("small", "Semua indikator di kolom paling kanan berarti proses ini layak dijadikan "
+                  "pilot pertama. Satu atau dua kolom tengah masih bisa ditoleransi. Kalau ada "
+                  "di kolom paling kiri, benahi dulu prosesnya sebelum bicara tool."),
         ("h2", "Yang tidak boleh dilakukan"),
         ("p", "Jangan mulai dari daftar tools. Jangan beli lisensi massal tanpa aturan main. "
               "Jangan beri AI akses ke data pelanggan tanpa batas yang tertulis. Jangan ukur "
@@ -209,7 +279,25 @@ build(
             ],
             [30, 128, 16],
         )),
-        ("h2", "2. Kontrak tool"),
+        ("h2", "2. Matriks keputusan: perlu agent atau tidak"),
+        ("p", "Jawab lima pertanyaan ini untuk pekerjaan yang sedang dipertimbangkan. Kalau "
+              "tidak semua jawabannya ya, pekerjaan itu belum perlu agent. Copilot atau "
+              "otomasi biasa lebih murah dan lebih aman."),
+        ("table", (
+            ["Pertanyaan", "Ya", "Tidak"],
+            [
+                ["Pekerjaannya berulang dan volumenya cukup tinggi?", "", ""],
+                ["Ada ukuran hasil yang jelas dan bisa dihitung?", "", ""],
+                ["Datanya sudah rapi dan ada pemiliknya?", "", ""],
+                ["Kalau salah, dampaknya bisa dibatasi atau dibalik?", "", ""],
+                ["Ada orang yang mau bertanggung jawab mengawasi hasilnya?", "", ""],
+            ],
+            [120, 20, 22],
+        )),
+        ("small", "Lima ya berarti lanjut ke bagian berikutnya. Satu atau dua tidak berarti "
+                  "pilih copilot dulu. Tiga atau lebih berarti pekerjaan ini belum perlu AI, "
+                  "melainkan perlu SOP."),
+        ("h2", "3. Kontrak tool"),
         ("table", (
             ["Area", "Yang harus ada", "Siap?"],
             [
@@ -232,7 +320,59 @@ build(
             ],
             [30, 128, 16],
         )),
-        ("h2", "4. Observability"),
+        ("h2", "4. Panduan validasi skema function calling"),
+        ("p", "Aturan yang paling sering dilanggar saat menulis tool untuk agent. Setiap aturan "
+              "ini pernah jadi penyebab kegagalan produksi, bukan teori."),
+        ("table", (
+            ["Aturan", "Salah", "Benar"],
+            [
+                ["Tipe data eksplisit", "Argumen bebas tanpa tipe", "Setiap field punya tipe dan batasan rentang"],
+                ["Wajib vs opsional", "Semua field opsional agar fleksibel", "Field yang dibutuhkan ditandai wajib"],
+                ["Nilai terbatas", "String bebas untuk status", "Daftar pilihan tertutup untuk nilai tetap"],
+                ["Teks panjang", "Satu field menampung seluruh dokumen", "Ada batas panjang dan pemotongan yang jelas"],
+                ["Tanggal dan angka", "Diterima apa adanya dari model", "Divalidasi ulang sebelum dipakai"],
+                ["Penolakan", "Argumen asing diabaikan diam-diam", "Argumen asing ditolak dengan alasan"],
+            ],
+            [38, 62, 74],
+        )),
+        ("small", "Aturan praktis: jangan biarkan model mengisi lebih dari yang dibutuhkan tool. "
+                  "Semakin sempit skemanya, semakin jarang agent salah pakai."),
+        ("h2", "5. Kebijakan rate limiting"),
+        ("table", (
+            ["Lapisan", "Batas yang harus ditetapkan", "Nilai"],
+            [
+                ["Per tugas", "Jumlah pemanggilan tool maksimum.", ""],
+                ["Per agent", "Permintaan per menit ke layanan hilir.", ""],
+                ["Per pengguna", "Kuota harian agar satu orang tidak menghabiskan jatah tim.", ""],
+                ["Per layanan hilir", "Batas sesuai kapasitas API tujuan, bukan keinginan kita.", ""],
+                ["Perilaku saat kena batas", "Ditolak dengan pesan jelas, bukan retry tanpa henti.", ""],
+            ],
+            [36, 106, 32],
+        )),
+        ("h2", "6. Template circuit breaker"),
+        ("p", "Isi nilai di bawah ini, lalu pasang di kode. Circuit breaker yang tidak punya "
+              "angka bukan circuit breaker."),
+        ("code", """
+CIRCUIT BREAKER - isi nilai sebelum dipakai
+
+failure_threshold      : ___ kegagalan beruntun sebelum agent dihentikan
+window                 : ___ detik jendela penghitungan kegagalan
+cooldown               : ___ detik agent berhenti sebelum dicoba lagi
+half_open_probe        : ___ pemanggilan uji saat cooldown selesai
+max_steps_per_task     : ___ langkah maksimum per tugas
+max_cost_per_task      : ___ token atau rupiah per tugas
+max_cost_per_day       : ___ token atau rupiah per hari
+task_timeout           : ___ detik per tugas
+step_timeout           : ___ detik per langkah
+on_open                : hentikan, catat, beri tahu pemilik proses
+
+PERILAKU WAJIB
+- setelah dihentikan, agent tidak mencoba lagi sampai cooldown lewat
+- setiap pembukaan circuit breaker tercatat dengan alasannya
+- tugas yang dihentikan masuk antrean manusia, bukan diulang buta
+- jumlah pembukaan per hari dipantau sebagai sinyal kesehatan sistem
+"""),
+        ("h2", "7. Observability"),
         ("table", (
             ["Pertanyaan", "Ya", "Tidak"],
             [
@@ -244,12 +384,12 @@ build(
             ],
             [120, 20, 22],
         )),
-        ("h2", "5. Guardrail perilaku"),
+        ("h2", "8. Guardrail perilaku"),
         ("p", "Tulis batas yang eksplisit: apa yang agent dilarang lakukan meskipun diminta, "
               "data apa yang tidak boleh dikirim ke model publik, dan kapan agent wajib berhenti "
               "dan bertanya. Batas yang hanya ada di prompt bukan batas. Batas yang benar "
               "ditegakkan di kode."),
-        ("h2", "6. Gerbang rilis"),
+        ("h2", "9. Gerbang rilis"),
         ("table", (
             ["Gerbang", "Bukti yang dikumpulkan", "Lulus?"],
             [
@@ -302,7 +442,19 @@ build(
             ],
             [16, 88, 70],
         )),
-        ("h2", "3. Konfigurasi yang paling sering salah"),
+        ("h2", "3. Checklist sizing hardware"),
+        ("table", (
+            ["Komponen", "Acuan aman", "Catatan"],
+            [
+                ["Memori", "Model 7B kuantisasi 4-bit butuh sekitar 6 sampai 8 GB, sisakan 2 GB untuk sistem.", "Kekurangan memori adalah penyebab paling umum VPS hang."],
+                ["vCPU", "Minimal 4 untuk satu sesi tunggal, 8 untuk beberapa sesi bersamaan.", "Terlalu sedikit core membuat waktu jawab tidak stabil."],
+                ["Disk", "Sediakan ruang untuk bobot model, log, dan cache. Bobot mudah membengkak.", "Pakai disk terpisah untuk data bila memungkinkan."],
+                ["GPU", "Opsional. Tanpa GPU, waktu jawab jauh lebih lambat tapi tetap bisa dipakai untuk uji.", "Jangan janjikan kecepatan GPU kalau tidak ada GPU."],
+                ["Swap", "Aktifkan swap sebagai jaring pengaman, bukan sebagai pengganti memori.", "Swap yang terus terpakai berarti memori kurang."],
+            ],
+            [26, 84, 64],
+        )),
+        ("h2", "4. Konfigurasi yang paling sering salah"),
         ("table", (
             ["Kesalahan", "Akibatnya", "Perbaikannya"],
             [
@@ -314,7 +466,90 @@ build(
             ],
             [52, 50, 72],
         )),
-        ("h2", "4. Verifikasi setelah naik"),
+        ("h2", "5. Template Docker Compose"),
+        ("code", """
+services:
+  model:
+    image: <image-model-open-weight-yang-dipilih>
+    container_name: llm-server
+    command: ["--host", "0.0.0.0", "--port", "8080", "--ctx-size", "4096"]
+    volumes:
+      - ./data/models:/models:ro
+    environment:
+      - MODEL_PATH=/models/<nama-bobot>.gguf
+      - N_THREADS=<jumlah-vcpu-dikurangi-satu>
+    mem_limit: <plafon-memori-yang-diuji>
+    cpus: "<jumlah-vcpu>"
+    ports:
+      - "127.0.0.1:8080:8080"   # HANYA localhost. proxy yang menghadap internet.
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+"""),
+        ("small", "Poin penting: binding ke 127.0.0.1, bukan 0.0.0.0. Plafon memori dan CPU "
+                  "wajib, bukan opsional. Rotasi log wajib supaya disk tidak penuh."),
+        ("h2", "6. Nginx reverse proxy dengan autentikasi header"),
+        ("code", """
+map $http_authorization $api_auth_ok {
+    default                      0;
+    "Bearer <token-yang-dipilih>" 1;
+}
+
+server {
+    listen 443 ssl;
+    server_name <domain-kamu>;
+
+    ssl_certificate     /etc/letsencrypt/live/<domain>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
+
+    client_max_body_size 2m;
+
+    location / {
+        if ($api_auth_ok = 0) { return 401; }
+
+        proxy_pass         http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        proxy_read_timeout    300s;
+        proxy_send_timeout    300s;
+        proxy_buffering       off;
+    }
+}
+
+server {
+    listen 80;
+    server_name <domain-kamu>;
+    return 301 https://$host$request_uri;
+}
+"""),
+        ("small", "Token di header ini adalah lapisan pertama, bukan satu-satunya. Ganti token "
+                  "sebelum dipakai orang lain, simpan di berkas dengan izin terbatas, dan "
+                  "jangan pernah menaruhnya di repo."),
+        ("h2", "7. Aturan firewall"),
+        ("code", """
+URUTAN PEMASANGAN (jangan dibalik, bisa terkunci sendiri)
+
+1. Pastikan SSH masih terbuka sebelum mengaktifkan firewall.
+2. Izinkan SSH, lalu HTTP dan HTTPS untuk proxy.
+3. Tolak semua port lain dari luar.
+4. Kunci port model (8080) agar hanya bisa diakses dari localhost.
+5. Uji dari mesin lain, bukan hanya dari server itu sendiri.
+6. Simpan aturan aktif ke berkas agar bertahan setelah reboot.
+7. Verifikasi lagi setelah reboot.
+
+PRINSIP
+- port model tidak pernah terbuka ke internet, hanya lewat proxy
+- setiap port yang dibuka punya alasan tertulis dan satu nama penanggung jawab
+- kalau belum butuh dibuka, jangan dibuka
+"""),
+        ("h2", "8. Verifikasi setelah naik"),
         ("table", (
             ["Uji", "Cara", "Hasil yang diharapkan"],
             [
@@ -326,7 +561,7 @@ build(
             ],
             [36, 78, 60],
         )),
-        ("h2", "5. Sebelum dipakai kerja nyata"),
+        ("h2", "9. Sebelum dipakai kerja nyata"),
         ("p", "Tentukan siapa yang boleh memakainya, data apa yang boleh masuk, dan bagaimana "
               "log ditinjau. Server yang rapi tapi tanpa aturan data hanya memindahkan masalah "
               "ke tempat yang lebih sulit dilihat."),
